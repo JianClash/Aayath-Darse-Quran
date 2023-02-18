@@ -39,7 +39,7 @@ class Services {
       'part': 'snippet,contentDetails',
       'channelId': CHANNEL_ID,
       'key': API_KEY,
-			'maxResults': '15',
+			'maxResults': '18',
 			'pageToken': pageToken!,
     };
     Map<String, String> headers = {

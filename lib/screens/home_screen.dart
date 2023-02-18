@@ -1,10 +1,15 @@
-import 'package:aayath_darse_quran/models/play_lists_info.dart';
-import 'package:aayath_darse_quran/screens/ayaahs.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+
+import 'package:aayath_darse_quran/models/play_lists_info.dart';
 import 'package:aayath_darse_quran/models/channel_info.dart';
 import 'package:aayath_darse_quran/models/videos_list.dart';
+
 import 'package:aayath_darse_quran/utils/services.dart';
+
+import 'package:aayath_darse_quran/screens/ayaahs.dart';
+import 'package:aayath_darse_quran/screens/navigation_drawer.dart' as Drawer;
+
+// import 'package:cached_network_image/cached_network_image.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -47,7 +52,11 @@ class _HomeScreenState extends State<HomeScreen> {
 		_playListsInfo = await Services.getPlaylistsInfo(
 			pageToken: _playListsNextPageToken);
 		_playListsNextPageToken = _playListsInfo!.nextPageToken;
-    _playListsList!.playListItems!.addAll(_playListsInfo!.playListItems!);
+		for (var playListItem in _playListsInfo!.playListItems!){
+			if (playListItem!.snippet!.title!.substring(0, 5) == "Surah" || playListItem.snippet!.title!.substring(0, 2) == "Al" || playListItem.snippet!.title == "At" || playListItem.snippet!.title == "Aalu Imran"){
+				_playListsList!.playListItems!.add(playListItem);
+			}
+		}
 		setState(() {});
 	}
 
@@ -56,11 +65,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+				centerTitle: true,
         title: Text(_loading! ? 'Loading...' : 'Ayaath Darse Quran'),
-				backgroundColor: Color.fromARGB(0, 33, 48, 69),
       ),
       body: Container(
-        color: Colors.blueGrey[600],
         child: Column(
           children: [
 						_loading! ? CircularProgressIndicator() :
@@ -91,16 +99,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         }));
 											},
                       child: Container(
-                        padding: EdgeInsets.all(20.0),
+                        padding: const EdgeInsets.all(20.0),
                         child: Row(
                           children: [
-													 // CachedNetworkImage(
-              //                 imageUrl: playListItem!.snippet!.thumbnails!
-														// 	.thumbnailsDefault!.url!,
-              //               ),
 														Image.asset('assets/surahIndicatorTest.png', width: 40, height: 40),
-													  SizedBox(width: 20),
-                            Flexible(child: Text(playListItem!.snippet!.title!, style: TextStyle(color: Colors.white))),
+													  const SizedBox(width: 20),
+                            Flexible(child: Text(playListItem!.snippet!.title!,)) //style: TextStyle(color: Colors.white))),
                           ],
                         ),
                       ),
@@ -112,6 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+			drawer: const Drawer.NavigationDrawer(),
     );
   }
 }

@@ -54,11 +54,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         title: Text(widget.videoItem.video!.title!),
       ),
       body: Container(
+				color: const Color.fromRGBO(33, 48, 69, 50),
         child: YoutubePlayer(
           controller: _controller!,
           showVideoProgressIndicator: true,
           onReady: () {
-            print('Player is ready.');
             _isPlayerReady = true;
           },
         ),

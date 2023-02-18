@@ -65,10 +65,9 @@ class _AyaahsState extends State<Ayaahs> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_loading! ? 'Loading...' : 'YouTube'),
+        title: Text(_loading! ? 'Loading...' : 'Aayath Darse Quran'),
       ),
       body: Container(
-        color: Colors.white,
         child: Column(
           children: [
 						_loading! ? CircularProgressIndicator() :
