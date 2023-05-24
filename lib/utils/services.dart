@@ -39,7 +39,7 @@ class Services {
       'part': 'snippet,contentDetails',
       'channelId': CHANNEL_ID,
       'key': API_KEY,
-			'maxResults': '18',
+			'maxResults': '50',
 			'pageToken': pageToken!,
     };
     Map<String, String> headers = {
@@ -60,7 +60,7 @@ class Services {
     Map<String, String> parameters = {
       'part': 'snippet',
       'playlistId': playListId!,
-      'maxResults': '8',
+      'maxResults': '50',
       'pageToken': pageToken!,
       'key': API_KEY,
     };

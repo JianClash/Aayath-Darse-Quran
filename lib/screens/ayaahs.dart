@@ -1,4 +1,4 @@
-import 'package:aayath_darse_quran/models/play_lists_info.dart';
+// import 'package:aayath_darse_quran/models/play_lists_info.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:aayath_darse_quran/models/channel_info.dart';
@@ -8,7 +8,7 @@ import 'package:aayath_darse_quran/utils/services.dart';
 
 class Ayaahs extends StatefulWidget {
 	
-	Ayaahs({String? this.playListId});
+	Ayaahs({this.playListId});
 	final String? playListId;
 
   @override
@@ -16,7 +16,7 @@ class Ayaahs extends StatefulWidget {
 }
 
 class _AyaahsState extends State<Ayaahs> {
-	_AyaahsState({String? this.playListId});
+	_AyaahsState({this.playListId});
 	
 	String? playListId;
   ChannelInfo? _channelInfo;
@@ -34,15 +34,12 @@ class _AyaahsState extends State<Ayaahs> {
     _scrollController = ScrollController();
     _videosList = VideosList();
     _videosList?.videos = [];
-    // playListId = playListId;
     _getChannelInfo();
-		print(playListId);
   }
 
   _getChannelInfo() async {
     _channelInfo = await Services.getChannelInfo();
     _item = _channelInfo!.items![0];
-    print('_playListId $playListId');
     await _loadVideos();
     setState(() {
       _loading = false;
@@ -56,8 +53,6 @@ class _AyaahsState extends State<Ayaahs> {
     );
     _nextPageToken = tempVideosList.nextPageToken;
     _videosList!.videos!.addAll(tempVideosList.videos!);
-    print('videos: ${_videosList!.videos!.length}');
-    print('_nextPageToken $_nextPageToken');
     setState(() {});
   }
 
@@ -74,12 +69,15 @@ class _AyaahsState extends State<Ayaahs> {
             Expanded(
               child: NotificationListener<ScrollEndNotification>(
                 onNotification: (ScrollNotification notification) {
-                  if (_videosList!.videos!.length >=
-                      int.parse(_item!.statistics!.videoCount!)) {
+
+                  // if (_videosList!.videos!.length >=
+                  //     int.parse(_item!.statistics!.videoCount!)) {
+                  if (_videosList!.videos!.length >= _videosList!.pageInfo!.totalResults!.toInt()){
                     return true;
                   }
                   if (notification.metrics.pixels ==
                       notification.metrics.maxScrollExtent) {
+                    print("Scrolling");
                     _loadVideos();
                   }
                   return true;

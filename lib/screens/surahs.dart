@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:aayath_darse_quran/models/play_lists_info.dart';
-import 'package:aayath_darse_quran/models/channel_info.dart';
 import 'package:aayath_darse_quran/models/videos_list.dart';
 
 import 'package:aayath_darse_quran/utils/services.dart';
@@ -15,27 +14,26 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  //
-  ChannelInfo? _channelInfo;
 	PlayListsInfo? _playListsInfo;
 	PlayListsInfo? _playListsList;
+  PlayListsInfo? surahs;
   VideosList? _videosList;
 	String? _playListsNextPageToken;
   bool? _loading;
-  String? _nextPageToken;
   ScrollController? _scrollController;
 
   @override
   void initState() {
     super.initState();
     _loading = true;
-    _nextPageToken = '';
 		_playListsNextPageToken = '';
     _scrollController = ScrollController();
     _videosList = VideosList();
     _videosList?.videos = [];
 		_playListsList = PlayListsInfo();
 		_playListsList?.playListItems = [];
+    surahs = PlayListsInfo();
+    surahs?.playListItems = [];
     _load();
   }
 
@@ -47,14 +45,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 	_loadPlayListsInfo() async {
-		_playListsInfo = await Services.getPlaylistsInfo(
-			pageToken: _playListsNextPageToken);
-		_playListsNextPageToken = _playListsInfo!.nextPageToken;
-		for (var playListItem in _playListsInfo!.playListItems!){
-			if (playListItem!.snippet!.title!.substring(0, 5) == "Surah" || playListItem.snippet!.title!.substring(0, 2) == "Al" || playListItem.snippet!.title == "At" || playListItem.snippet!.title == "Aalu Imran"){
-				_playListsList!.playListItems!.add(playListItem);
-			}
-		}
+    _playListsInfo = await Services.getPlaylistsInfo(
+      pageToken: _playListsNextPageToken);
+    _playListsNextPageToken = _playListsInfo!.nextPageToken;
+ 
+    for (var playListItem in _playListsInfo!.playListItems!){
+      if (playListItem!.snippet!.title!.substring(0, 5) == "Surah" || playListItem.snippet!.title!.substring(0, 2) == "Al" || playListItem.snippet!.title == "At" || playListItem.snippet!.title == "Aalu Imran"){
+        _playListsList!.playListItems!.add(playListItem);
+      }
+    }   
+
+    while (_playListsInfo!.pageInfo!.totalResults! > _playListsInfo!.pageInfo!.resultsPerPage!){
+		  _playListsInfo = await Services.getPlaylistsInfo(
+			  pageToken: _playListsNextPageToken);
+		  _playListsNextPageToken = _playListsInfo!.nextPageToken;
+
+		  for (var playListItem in _playListsInfo!.playListItems!){
+			  if (playListItem!.snippet!.title!.substring(0, 5) == "Surah" || playListItem.snippet!.title!.substring(0, 2) == "Al" || playListItem.snippet!.title == "At" || playListItem.snippet!.title == "Aalu Imran"){
+				  _playListsList!.playListItems!.add(playListItem);
+			  }
+		  }
+    }
+
+    surahs!.playListItems = _playListsList!.playListItems!.reversed.toList();
 		setState(() {});
 	}
 
@@ -76,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 controller: _scrollController,
                 itemCount: _playListsList!.playListItems!.length,
                 itemBuilder: (context, index) {
-                  PlayListItem? playListItem = _playListsList!.playListItems![index];
+                  PlayListItem? playListItem = surahs!.playListItems![index];
                   return InkWell(
                     onTap: () async {
                       Navigator.push(context,
