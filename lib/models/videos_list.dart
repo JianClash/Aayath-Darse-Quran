@@ -1,8 +1,12 @@
 // To parse this JSON data, do
 //
 //     final videosList = videosListFromJson(jsonString);
-
 import 'dart:convert';
+
+import 'package:hive_flutter/hive_flutter.dart';
+
+part 'videos_list.g.dart';
+
 
 VideosList videosListFromJson(String str) =>
     VideosList.fromJson(json.decode(str));
@@ -42,18 +46,26 @@ class VideosList {
       };
 }
 
+@HiveType(typeId: 1, adapterName: 'VideoItemAdapter')
 class VideoItem {
+  @HiveField(0)
+  String? kind;
+
+  @HiveField(1)
+  String? etag;
+
+  @HiveField(2)
+  String? id;
+
+  @HiveField(3)
+  Video? video;
+
   VideoItem({
     this.kind,
     this.etag,
     this.id,
     this.video,
   });
-
-  String? kind;
-  String? etag;
-  String? id;
-  Video? video;
 
   factory VideoItem.fromJson(Map<String, dynamic> json) => VideoItem(
         kind: json["kind"],
@@ -70,7 +82,35 @@ class VideoItem {
       };
 }
 
+@HiveType(typeId: 2, adapterName: 'VideoAdapter')
 class Video {
+  @HiveField(0)
+  DateTime? publishedAt;
+
+  @HiveField(1)
+  String? channelId;
+
+  @HiveField(2)
+  String? title;
+
+  @HiveField(3)
+  String? description;
+
+  @HiveField(4)
+  Thumbnails? thumbnails;
+
+  @HiveField(5)
+  String? channelTitle;
+
+  @HiveField(6)
+  String? playlistId;
+
+  @HiveField(7)
+  int? position;
+
+  @HiveField(8)
+  ResourceId? resourceId;
+
   Video({
     this.publishedAt,
     this.channelId,
@@ -83,15 +123,6 @@ class Video {
     this.resourceId,
   });
 
-  DateTime? publishedAt;
-  String? channelId;
-  String? title;
-  String? description;
-  Thumbnails? thumbnails;
-  String? channelTitle;
-  String? playlistId;
-  int? position;
-  ResourceId? resourceId;
 
   factory Video.fromJson(Map<String, dynamic> json) => Video(
         publishedAt: DateTime.parse(json["publishedAt"]),
@@ -118,14 +149,20 @@ class Video {
       };
 }
 
+
+@HiveType(typeId: 3, adapterName: 'ResourceIdAdapter')
 class ResourceId {
+  @HiveField(0)
+  String? kind;
+
+  @HiveField(1)
+  String? videoId;
+
   ResourceId({
     this.kind,
     this.videoId,
   });
 
-  String? kind;
-  String? videoId;
 
   factory ResourceId.fromJson(Map<String, dynamic> json) => ResourceId(
         kind: json["kind"],
@@ -138,7 +175,23 @@ class ResourceId {
       };
 }
 
+@HiveType(typeId: 4, adapterName: 'ThumbnailsAdapter')
 class Thumbnails {
+  @HiveField(0)
+  Default? thumbnailsDefault;
+
+  @HiveField(1)
+  Default? medium;
+
+  @HiveField(2)
+  Default? high;
+
+  @HiveField(3)
+  Default? standard;
+
+  @HiveField(4)
+  Default? maxres;
+
   Thumbnails({
     this.thumbnailsDefault,
     this.medium,
@@ -146,12 +199,6 @@ class Thumbnails {
     this.standard,
     this.maxres,
   });
-
-  Default? thumbnailsDefault;
-  Default? medium;
-  Default? high;
-  Default? standard;
-  Default? maxres;
 
   factory Thumbnails.fromJson(Map<String, dynamic> json) => Thumbnails(
         thumbnailsDefault: Default.fromJson(json["default"]),
@@ -173,16 +220,25 @@ class Thumbnails {
       };
 }
 
+
+
+@HiveType(typeId: 5, adapterName: 'DefaultAdapter')
 class Default {
+  @HiveField(0)
+  String? url;
+
+  @HiveField(1)
+  int? width;
+
+  @HiveField(2)
+  int? height;
+
   Default({
     this.url,
     this.width,
     this.height,
   });
 
-  String? url;
-  int? width;
-  int? height;
 
   factory Default.fromJson(Map<String, dynamic> json) => Default(
         url: json["url"],
@@ -214,6 +270,6 @@ class PageInfo {
   Map<String, dynamic> toJson() => {
         "totalResults": totalResults,
         "resultsPerPage": resultsPerPage,
-      };
+  };
 }
 

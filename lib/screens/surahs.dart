@@ -6,14 +6,13 @@ import 'package:aayath_darse_quran/models/videos_list.dart';
 import 'package:aayath_darse_quran/utils/services.dart';
 
 import 'package:aayath_darse_quran/screens/ayaahs.dart';
-import 'package:aayath_darse_quran/screens/bottom_navigation_bar.dart' as nav_bar;
 
-class HomeScreen extends StatefulWidget {
+class ListSurahs extends StatefulWidget {
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _ListSurahsState createState() => _ListSurahsState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _ListSurahsState extends State<ListSurahs> {
 	PlayListsInfo? _playListsInfo;
 	PlayListsInfo? _playListsList;
   PlayListsInfo? surahs;
@@ -80,10 +79,9 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text(_loading! ? 'Loading...' : 'Ayaath Darse Quran'),
       ),
 
-      // body: Container(
       body: Column(
         children: [
-          _loading! ?  const Center(child: CircularProgressIndicator()): // const Align(alignment: Alignment.center, child: CircularProgressIndicator(),):
+          _loading! ?  const Center(child: CircularProgressIndicator()):
           Expanded(
               child: ListView.builder(
                 controller: _scrollController,
@@ -94,8 +92,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () async {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return Ayaahs(playListId: playListItem.id,);
-                      }));
+                            return Ayaahs(playListId: playListItem.id,);
+                          })
+                      );
                     },
                     child: Container(
                       padding: const EdgeInsets.all(20.0),
@@ -111,11 +110,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-          // ),
         ],
       ),
-    // ),
-    bottomNavigationBar: const nav_bar.BottomNavigationBar()
     );
   }
 }

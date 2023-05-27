@@ -1,27 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:aayath_darse_quran/models/videos_list.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+import 'package:aayath_darse_quran/models/videos_list.dart';
+
+import 'package:aayath_darse_quran/data/database.dart';
+
+import 'package:aayath_darse_quran/screens/home_screen.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
   //
   VideoPlayerScreen({required this.videoItem});
-  final VideoItem videoItem;
+  final VideoItem? videoItem;
 
   @override
-  _VideoPlayerScreenState createState() => _VideoPlayerScreenState();
+  _VideoPlayerScreenState createState() => _VideoPlayerScreenState(videoItem: videoItem);
 }
 
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
-  //
+  _VideoPlayerScreenState({this.videoItem});
+
+  VideoItem? videoItem;
   YoutubePlayerController? _controller;
   bool? _isPlayerReady;
+  BookmarkDataBase? db;
 
   @override
   void initState() {
     super.initState();
     _isPlayerReady = false;
+    db = BookmarkDataBase();
     _controller = YoutubePlayerController(
-      initialVideoId: widget.videoItem.video!.resourceId!.videoId!,
+      initialVideoId: widget.videoItem!.video!.resourceId!.videoId!,
       flags: const YoutubePlayerFlags(
         mute: false,
         autoPlay: true,
@@ -50,10 +59,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(widget.videoItem.video!.title!),
-      // ),
-
       body: Container(
 				color: const Color.fromRGBO(33, 48, 69, 50),
         child: Column(
@@ -70,7 +75,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
               alignment: Alignment.centerLeft,   
               child: Padding(
                 padding: const EdgeInsets.all(8),
-                child: Text(widget.videoItem.video!.title!, style: const TextStyle(fontSize: 20))
+                child: Text(widget.videoItem!.video!.title!, style: const TextStyle(fontSize: 20))
               )
             ),
 
@@ -86,43 +91,51 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                     child: Container(
                       decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey[700]),
                       padding: const EdgeInsets.all(5),
-                      child: Row(
-                        children: const [
+                      child: const Row(
+                        children:  [
                           Icon(Icons.thumb_up_outlined)
                         ]
                       )
                     ),
                   ),
 
-                  Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Container(
-                      decoration: BoxDecoration(shape: BoxShape.rectangle, color: Colors.grey[700], borderRadius: BorderRadius.circular(20)),
+                  GestureDetector(
+                    onTap: (){
+                      db!.updateBookmarks(videoItem);
+                      print('Gesture detected: ${db!.getBookmarks()}');
+                      db!.updateDataBase();
+                    },
+                    child: Padding(
                       padding: const EdgeInsets.all(5),
-                      child: Row(
-                        children: const [
-                          Icon(Icons.bookmark_outline),
-                          Text("Bookmark"),
-                        ]
-                      )
-                    ),
+                      child: Container(
+                        decoration: BoxDecoration(shape: BoxShape.rectangle, color: Colors.grey[700], borderRadius: BorderRadius.circular(20)),
+                        padding: const EdgeInsets.all(5),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.bookmark_outline),
+                            Text("Bookmark"),
+                          ]
+                        )
+                      ),
+                    )
                   )
-
                 ],  
               )
             )
           ],
         ),
       ),
+    //   floatingActionButton: FloatingActionButton(
+    //     onPressed: () async {
+    //       Navigator.push(context,
+    //           MaterialPageRoute(builder: (context) {
+    //             return const HomeScreen();
+    //           })
+    //       );
+    //     },
+    //     child: const Icon(Icons.arrow_back)
+    //   ),
     );
   }
 }
 
-
-        //   YoutubePlayer(
-        //   controller: _controller!,
-        //   showVideoProgressIndicator: true,
-        //   onReady: () {
-        //     _isPlayerReady = true;
-        //   },
-        // ),

@@ -62,59 +62,53 @@ class _AyaahsState extends State<Ayaahs> {
       appBar: AppBar(
         title: Text(_loading! ? 'Loading...' : 'Aayath Darse Quran'),
       ),
-      body: Container(
-        child: Column(
-          children: [
-						_loading! ? CircularProgressIndicator() :
-            Expanded(
-              child: NotificationListener<ScrollEndNotification>(
-                onNotification: (ScrollNotification notification) {
-
-                  // if (_videosList!.videos!.length >=
-                  //     int.parse(_item!.statistics!.videoCount!)) {
-                  if (_videosList!.videos!.length >= _videosList!.pageInfo!.totalResults!.toInt()){
-                    return true;
-                  }
-                  if (notification.metrics.pixels ==
-                      notification.metrics.maxScrollExtent) {
-                    print("Scrolling");
-                    _loadVideos();
-                  }
+      body: Column(
+        children: [
+          _loading! ? CircularProgressIndicator() :
+          Expanded(
+            child: NotificationListener<ScrollEndNotification>(
+              onNotification: (ScrollNotification notification) {
+                if (_videosList!.videos!.length >= _videosList!.pageInfo!.totalResults!.toInt()){
                   return true;
-                },
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: _videosList!.videos!.length,
-                  itemBuilder: (context, index) {
-                    VideoItem videoItem = _videosList!.videos![index];
-                    return InkWell(
-                      onTap: () async {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return VideoPlayerScreen(
-                            videoItem: videoItem,
-                          );
-                        }));
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(20.0),
-                        child: Row(
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: videoItem.video!.thumbnails!.thumbnailsDefault!.url!,
-                            ),
-                            SizedBox(width: 20),
-                            Flexible(child: Text(videoItem.video!.title!)),
-                          ],
-                        ),
+                }
+                if (notification.metrics.pixels ==
+                    notification.metrics.maxScrollExtent) {
+                  _loadVideos();
+                }
+                return true;
+              },
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: _videosList!.videos!.length,
+                itemBuilder: (context, index) {
+                  VideoItem videoItem = _videosList!.videos![index];
+                  return InkWell(
+                    onTap: () async {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return VideoPlayerScreen(
+                          videoItem: videoItem,
+                        );
+                      }));
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(20.0),
+                      child: Row(
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl: videoItem.video!.thumbnails!.thumbnailsDefault!.url!,
+                          ),
+                          SizedBox(width: 20),
+                          Flexible(child: Text(videoItem.video!.title!)),
+                        ],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
