@@ -4,15 +4,9 @@ final _bookmarkBox = Hive.box("bookmarkBox");
 List bookmarks = [];
 
 class BookmarkDataBase {
-
-
   void loadData() {
-    // _bookmarkBox.put("BOOKMARKS", []);
-    if (_bookmarkBox.get("BOOKMARKS") == null){
-      print("no data");
-    } else {
+    if (_bookmarkBox.get("BOOKMARKS") != null){
       bookmarks = _bookmarkBox.get("BOOKMARKS");
-      print('load data local: $bookmarks');
     }
   }
 
@@ -20,9 +14,13 @@ class BookmarkDataBase {
     _bookmarkBox.put("BOOKMARKS", bookmarks);
   }
 
-  void updateBookmarks(videoItem){
+  void addBookmark(videoItem){
     bookmarks.add(videoItem);
   } 
+
+  void removeBookmark(videoItem){
+    bookmarks.remove(videoItem);
+  }
 
   getBookmarks(){
     return bookmarks;

@@ -31,7 +31,6 @@ class _BookmarkState extends State<Bookmark> {
   }
 
   _loadBookmarks() async {
-    print("PLEASE!!!!: ${db!.getBookmarks()}");
     _shownBookmarks!.addAll(db!.getBookmarks());
     setState(() {
       _loading = false;       

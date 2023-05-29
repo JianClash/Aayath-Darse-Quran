@@ -7,7 +7,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 part 'videos_list.g.dart';
 
-
 VideosList videosListFromJson(String str) =>
     VideosList.fromJson(json.decode(str));
 
@@ -60,26 +59,35 @@ class VideoItem {
   @HiveField(3)
   Video? video;
 
+  @HiveField(4)
+  bool? bookmarked;
+
+  @HiveField(5)
+  bool? liked;
+
   VideoItem({
     this.kind,
     this.etag,
     this.id,
+    this.bookmarked,
+    this.liked,
     this.video,
   });
+
 
   factory VideoItem.fromJson(Map<String, dynamic> json) => VideoItem(
         kind: json["kind"],
         etag: json["etag"],
         id: json["id"],
         video: Video.fromJson(json["snippet"]),
-      );
+  );
 
   Map<String, dynamic> toJson() => {
         "kind": kind,
         "etag": etag,
         "id": id,
         "snippet": video!.toJson(),
-      };
+  };
 }
 
 @HiveType(typeId: 2, adapterName: 'VideoAdapter')
@@ -134,7 +142,7 @@ class Video {
         playlistId: json["playlistId"],
         position: json["position"],
         resourceId: ResourceId.fromJson(json["resourceId"]),
-      );
+  );
 
   Map<String, dynamic> toJson() => {
         "publishedAt": publishedAt!.toIso8601String(),
@@ -220,8 +228,6 @@ class Thumbnails {
       };
 }
 
-
-
 @HiveType(typeId: 5, adapterName: 'DefaultAdapter')
 class Default {
   @HiveField(0)
@@ -244,13 +250,13 @@ class Default {
         url: json["url"],
         width: json["width"],
         height: json["height"],
-      );
+  );
 
   Map<String, dynamic> toJson() => {
         "url": url,
         "width": width,
         "height": height,
-      };
+  };
 }
 
 class PageInfo {
@@ -265,11 +271,10 @@ class PageInfo {
   factory PageInfo.fromJson(Map<String, dynamic> json) => PageInfo(
         totalResults: json["totalResults"],
         resultsPerPage: json["resultsPerPage"],
-      );
+  );
 
   Map<String, dynamic> toJson() => {
         "totalResults": totalResults,
         "resultsPerPage": resultsPerPage,
   };
 }
-

@@ -20,6 +20,8 @@ class VideoItemAdapter extends TypeAdapter<VideoItem> {
       kind: fields[0] as String?,
       etag: fields[1] as String?,
       id: fields[2] as String?,
+      bookmarked: fields[4] as bool?,
+      liked: fields[5] as bool?,
       video: fields[3] as Video?,
     );
   }
@@ -27,7 +29,7 @@ class VideoItemAdapter extends TypeAdapter<VideoItem> {
   @override
   void write(BinaryWriter writer, VideoItem obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.kind)
       ..writeByte(1)
@@ -35,7 +37,11 @@ class VideoItemAdapter extends TypeAdapter<VideoItem> {
       ..writeByte(2)
       ..write(obj.id)
       ..writeByte(3)
-      ..write(obj.video);
+      ..write(obj.video)
+      ..writeByte(4)
+      ..write(obj.bookmarked)
+      ..writeByte(5)
+      ..write(obj.liked);
   }
 
   @override

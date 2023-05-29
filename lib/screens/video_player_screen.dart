@@ -20,6 +20,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   _VideoPlayerScreenState({this.videoItem});
 
   VideoItem? videoItem;
+  bool? bookmarked;
   YoutubePlayerController? _controller;
   bool? _isPlayerReady;
   BookmarkDataBase? db;
@@ -29,6 +30,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     super.initState();
     _isPlayerReady = false;
     db = BookmarkDataBase();
+    bookmarked = getBookmarked();
     _controller = YoutubePlayerController(
       initialVideoId: widget.videoItem!.video!.resourceId!.videoId!,
       flags: const YoutubePlayerFlags(
@@ -37,6 +39,13 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       ),
     )..addListener(_listener);
   }
+
+  getBookmarked(){
+    if (db!.getBookmarks().contains(videoItem)){
+      return true;
+    }
+    return false;
+  } 
 
   void _listener() {
     if (_isPlayerReady! && mounted && !_controller!.value.isFullScreen) {
@@ -85,7 +94,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children :  [
-                  
                   Padding(
                     padding: const EdgeInsets.all(5),
                     child: Container(
@@ -98,25 +106,32 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                       )
                     ),
                   ),
-
-                  GestureDetector(
-                    onTap: (){
-                      db!.updateBookmarks(videoItem);
-                      print('Gesture detected: ${db!.getBookmarks()}');
-                      db!.updateDataBase();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(5),
-                      child: Container(
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: GestureDetector(
+                      onTap: (){
+                        setState(() {
+                          if (bookmarked == false){
+                            db!.addBookmark(videoItem);
+                          } else {
+                            db!.removeBookmark(videoItem);
+                          }
+                          db!.updateDataBase();
+                          bookmarked = !bookmarked!;
+                        });
+                      },
+                      child: Ink(
                         decoration: BoxDecoration(shape: BoxShape.rectangle, color: Colors.grey[700], borderRadius: BorderRadius.circular(20)),
-                        padding: const EdgeInsets.all(5),
-                        child: const Row(
-                          children: [
-                            Icon(Icons.bookmark_outline),
-                            Text("Bookmark"),
-                          ]
+                        child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              children: [
+                                Icon(bookmarked! ? Icons.bookmark:Icons.bookmark_outline),
+                                Text(bookmarked! ? "Bookmarked":"Bookmark")
+                              ]
+                            )
                         )
-                      ),
+                      )
                     )
                   )
                 ],  
@@ -125,16 +140,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           ],
         ),
       ),
-    //   floatingActionButton: FloatingActionButton(
-    //     onPressed: () async {
-    //       Navigator.push(context,
-    //           MaterialPageRoute(builder: (context) {
-    //             return const HomeScreen();
-    //           })
-    //       );
-    //     },
-    //     child: const Icon(Icons.arrow_back)
-    //   ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) {
+                return const HomeScreen();
+              })
+          );
+        },
+        child: const Icon(Icons.arrow_back)
+      ),
     );
   }
 }
